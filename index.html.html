@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chase 56-Week Complete Training Plan</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; margin: 4px; transition: all 0.2s; }
+        .btn-primary { background: #7c3aed; color: white; }
+        .btn-primary:hover { background: #6d28d9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4); }
+        .btn-secondary { background: white; color: #374151; border: 2px solid #e5e7eb; }
+        .btn-secondary:hover { background: #f9fafb; }
+        .btn-active { background: #7c3aed; color: white; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4); }
+        .week-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+        .week-box { padding: 14px; border-radius: 10px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; border: 2px solid #e5e7eb; }
+        .week-box:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
+        .week-box.active { border-color: #10b981; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); font-weight: bold; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        .week-box.recovery { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981; }
+        .week-box.generalprep { background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%); border-color: #22c55e; }
+        .week-box.deload { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b; }
+        .week-box.test { background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); border-color: #ef4444; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; font-weight: 600; color: #374151; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        .checkbox { width: 22px; height: 22px; cursor: pointer; }
+        .completed { opacity: 0.6; background: #d1fae5; }
+        .completed .ex-name { text-decoration: line-through; }
+        .goal-card { background: white; border-radius: 14px; padding: 24px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s; }
+        .goal-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+        .goal-progress { width: 100%; height: 14px; background: #e5e7eb; border-radius: 7px; overflow: hidden; margin-top: 10px; }
+        .goal-progress-bar { height: 100%; transition: width 0.5s ease; border-radius: 7px; }
+        .green { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+        .yellow { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
+        .red { background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%); }
+        select, input[type="number"], input[type="text"] { padding: 10px 14px; border-radius: 8px; border: 2px solid #e5e7eb; width: 100%; font-size: 15px; transition: all 0.2s; }
+        select:focus, input:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); }
+        .badge { display: inline-block; padding: 10px 18px; border-radius: 24px; font-weight: 700; margin: 4px; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .badge-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .badge-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; }
+        .badge-purple { background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: white; }
+        .badge-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .stat-card { background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb; }
+        .stat-number { font-size: 42px; font-weight: 800; margin: 8px 0; }
+        .stat-label { font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(1000px) rotate(720deg); opacity: 0; } }
+        .confetti { position: fixed; width: 10px; height: 10px; animation: confetti 3s ease-out forwards; z-index: 9999; }
+        .progress-ring { width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; margin-top: 12px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%); transition: width 0.5s ease; border-radius: 4px; }
+        .session-header { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .pct-badge { background: #fed7aa; color: #9a3412; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 13px; }
+        .edit-input { border: 2px solid #7c3aed !important; background: #faf5ff; }
+        .delete-btn { background: #ef4444; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; border: none; font-weight: 600; font-size: 12px; }
+        .delete-btn:hover { background: #dc2626; }
+        .add-btn { background: #10b981; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; margin-top: 12px; }
+        .add-btn:hover { background: #059669; }
+        .mileage-breakdown { max-height: 500px; overflow-y: auto; }
+        .mileage-row { padding: 14px; background: #f9fafb; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .mileage-row:hover { background: #f3f4f6; }
+        .mileage-row.current { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 2px solid #10b981; font-weight: 600; }
+        .mileage-bar { height: 6px; background: #3b82f6; border-radius: 3px; margin-top: 4px; }
+        .volume-card { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+        .volume-stat { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border-radius: 8px; margin-bottom: 8px; }
+        .volume-label { font-weight: 700; color: #92400e; }
+        .volume-value { font-size: 20px; font-weight: 800; color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const STORAGE = 'chase56complete';
+        
+        // Volume and Intensity for 56 weeks (4 recovery/prep + 52 main)
+        const VOL = [
+            // Recovery Weeks 1-2 (Deep Recovery)
+            2, 2,
+            // General Prep Weeks 3-4
+            4, 5,
+            // Original 52 weeks
+            6,7,8,4,7,8,9,5,6,7,7,4,5,6,6,3,8,9,9,5,6,7,8,4,5,6,6,3,6,7,7,4,7,7,8,4,5,5,4,3,4,4,3,2,4,5,4,3,3,2,2,2
+        ];
+        
+        const INT = [
+            // Recovery Weeks 1-2 (Deep Recovery)
+            2, 3,
+            // General Prep Weeks 3-4
+            3, 4,
+            // Original 52 weeks
+            4,4,5,4,6,6,7,5,7,8,8,6,9,9,9,7,7,7,8,6,8,9,9,7,9,9,10,7,7,8,8,6,9,9,9,7,9,10,10,8,9,10,10,8,8,9,9,7,10,10,10,10
+        ];
+
+        const PHASES = [
+            {name:"💚 Recovery 1", weeks:1, focus:"Deep recovery from half marathon - active rest", color:"#10b981"},
+            {name:"💚 Recovery 2", weeks:1, focus:"Continued recovery - light movement prep", color:"#10b981"},
+            {name:"🟢 General Prep 1", weeks:1, focus:"Re-establish movement patterns and work capacity", color:"#22c55e"},
+            {name:"🟢 General Prep 2", weeks:1, focus:"Build foundation for main training block", color:"#22c55e"},
+            {name:"GPP", weeks:4, focus:"Build base in all qualities", color:"#3b82f6"},
+            {name:"Hypertrophy 1", weeks:4, focus:"Muscle + aerobic foundation", color:"#8b5cf6"},
+            {name:"Strength 1", weeks:4, focus:"Squat/Trap/Bench + threshold running", color:"#ec4899"},
+            {name:"Power 1", weeks:4, focus:"Cleans + VJ + sprint foundation", color:"#f59e0b"},
+            {name:"Hypertrophy 2", weeks:4, focus:"Advanced hypertrophy + running economy", color:"#8b5cf6"},
+            {name:"Strength 2", weeks:4, focus:"PEAK squat/trap/bench", color:"#ef4444"},
+            {name:"Power 2", weeks:4, focus:"PEAK cleans + VJ", color:"#f97316"},
+            {name:"Mile Block", weeks:4, focus:"Mile-specific speed training", color:"#06b6d4"},
+            {name:"Integration", weeks:4, focus:"Combine all qualities", color:"#6366f1"},
+            {name:"Strength Peak", weeks:4, focus:"Final strength peak", color:"#dc2626"},
+            {name:"Speed/Power Peak", weeks:4, focus:"PEAK VJ + 30yd dash", color:"#ea580c"},
+            {name:"Mile Peak", weeks:4, focus:"Sub-5:15 mile race prep", color:"#0ea5e9"},
+            {name:"Testing", weeks:4, focus:"Test all goals - MAX OUT", color:"#10b981"}
+        ];
+
+        function App() {
+            const [currentWeek, setCurrentWeek] = useState(0);
+            const [currentSession, setCurrentSession] = useState(0);
+            const [view, setView] = useState('overview');
+            const [editMode, setEditMode] = useState(false);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            const macroChartRef = useRef(null);
+            const macroChartInstance = useRef(null);
+            
+            const [data, setData] = useState(() => {
+                const saved = localStorage.getItem(STORAGE);
+                if(saved) {
+                    try { 
+                        const parsed = JSON.parse(saved);
+                        if(parsed.weeks && parsed.weeks.length === 56) return parsed;
+                    } catch(e) {}
+                }
+                return {
+                    goals: [
+                        {name:"Mile Time", curr:6.5, target:5.25, unit:"min", icon:"🏃", lower:true, display:"5:15"},
+                        {name:"Squat", curr:293, target:365, unit:"lbs", icon:"🏋️"},
+                        {name:"Trap Bar DL", curr:405, target:405, unit:"lbs", icon:"💪"},
+                        {name:"Bench Press", curr:213, target:255, unit:"lbs", icon:"🔥"},
+                        {name:"Power Clean", curr:165, target:225, unit:"lbs", icon:"⚡"},
+                        {name:"Vertical Jump", curr:14, target:18, unit:"in", icon:"⬆️"},
+                        {name:"30yd Dash", curr:4.5, target:4.0, unit:"sec", icon:"⚡", lower:true}
+                    ],
+                    totalMiles: 0,
+                    weekMiles: {},
+                    weeks: generateWeeks()
+                };
+            });
+
+            useEffect(() => {
+                localStorage.setItem(STORAGE, JSON.stringify(data));
+            }, [data]);
+
+            useEffect(() => {
+                if(view === 'goals' && chartRef.current && window.Chart) {
+                    if(chartInstance.current) chartInstance.current.destroy();
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.goals.map(g => g.name),
+                            datasets: [{
+                                label: 'Current',
+                                data: data.goals.map(g => g.curr),
+                                backgroundColor: 'rgba(124, 58, 237, 0.7)',
+                                borderColor: 'rgba(124, 58, 237, 1)',
+                                borderWidth: 2
+                            }, {
+                                label: 'Target',
+                                data: data.goals.map(g => g.target),
+                                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                                borderColor: 'rgba(16, 185, 129, 1)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: { display: true, text: 'Performance Goals Tracking', font: {size: 18, weight: 'bold'} }
+                            }
+                        }
+                    });
+                }
+                return () => { if(chartInstance.current) chartInstance.current.destroy(); };
+            }, [view, data.goals]);
+
+            useEffect(() => {
+                if(view === 'overview' && macroChartRef.current && window.Chart) {
+                    if(macroChartInstance.current) macroChartInstance.current.destroy();
+                    const ctx = macroChartRef.current.getContext('2d');
+                    const weeks = data.weeks.map((_, i) => `W${i + 1}`);
+                    macroChartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: weeks,
+                            datasets: [{
+                                label: 'Volume Load',
+                                data: VOL,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3
+                            }, {
+                                label: 'Intensity',
+                                data: INT,
+                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: { display: true, text: '56-Week Training Plan: Recovery → Preparation → Performance', font: {size: 18, weight: 'bold'} },
+                                subtitle: { display: true, text: '4 weeks recovery/prep + 52 weeks concurrent training periodization' }
+                            },
+                            scales: {
+                                y: { min: 0, max: 11, title: { display: true, text: 'Training Load (1-10 scale)' } }
+                            }
+                        }
+                    });
+                }
+                return () => { if(macroChartInstance.current) macroChartInstance.current.destroy(); };
+            }, [view]);
+
+            function generateWeeks() {
+                const weeks = [];
+                let weekNum = 1;
+                PHASES.forEach((phase, pi) => {
+                    for(let w = 0; w < phase.weeks; w++) {
+                        if(weekNum > 56) return;
+                        const isRecovery = weekNum <= 2;
+                        const isGeneralPrep = weekNum >= 3 && weekNum <= 4;
+                        const isDeload = weekNum > 4 && ((weekNum - 4) % 4 === 0);
+                        const isTest = weekNum >= 53;
+                        
+                        weeks.push({
+                            num: weekNum,
+                            phase: phase.name,
+                            focus: phase.focus,
+                            color: phase.color,
+                            vol: VOL[weekNum-1],
+                            int: INT[weekNum-1],
+                            recovery: isRecovery,
+                            generalprep: isGeneralPrep,
+                            deload: isDeload,
+                            test: isTest,
+                            sessions: getSessions(weekNum, pi, isRecovery, isGeneralPrep, isDeload)
+                        });
+                        weekNum++;
+                    }
+                });
+                return weeks;
+            }
+
+            function getSessions(weekNum, pi, isRecovery, isGeneralPrep, isDeload) {
+                // RECOVERY WEEKS 1-2
+                if(isRecovery) {
+                    const sqW = Math.round(365 * 0.40 / 5) * 5;
+                    const benW = Math.round(255 * 0.40 / 5) * 5;
+                    const trapW = Math.round(405 * 0.40 / 5) * 5;
+                    
+                    return [
+                        {
+                            name: "Monday - Active Recovery Movement",
+                            day: "Monday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Dynamic Stretching", s:1, r:"15min", w:"", pct:"", done:false, notes:"Leg swings, arm circles, light mobility", mi:0},
+                                {n:"Goblet Squat", s:2, r:"20", w:"20", pct:"", done:false, notes:"Movement quality, no load", mi:0},
+                                {n:"Push-ups", s:2, r:"15", w:"BW", pct:"", done:false, notes:"Controlled tempo", mi:0},
+                                {n:"Light DB Rows", s:2, r:"20", w:"20", pct:"", done:false, notes:"Back activation", mi:0},
+                                {n:"Planks", s:2, r:"30s", w:"", pct:"", done:false, notes:"Core engagement", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Tuesday - Easy Walk/Jog",
+                            day: "Tuesday",
+                            totalMiles: 2,
+                            ex: [
+                                {n:"Easy Walk/Jog", s:1, r:"15-20min", w:"", pct:"", done:false, notes:"Conversational pace, walk breaks as needed", mi:2}
+                            ]
+                        },
+                        {
+                            name: "Wednesday - Light Circuit",
+                            day: "Wednesday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Bodyweight Squats", s:2, r:"15", w:"BW", pct:"", done:false, notes:"Light movement", mi:0},
+                                {n:"DB Bench Press", s:2, r:"15", w:"30", pct:"", done:false, notes:"Very light", mi:0},
+                                {n:"Band Pull-aparts", s:2, r:"20", w:"", pct:"", done:false, notes:"Shoulder health", mi:0},
+                                {n:"Dead Bugs", s:2, r:"10/side", w:"", pct:"", done:false, notes:"Core control", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Thursday - Easy Movement",
+                            day: "Thursday",
+                            totalMiles: 2,
+                            ex: [
+                                {n:"Walk or Easy Bike", s:1, r:"20min", w:"", pct:"", done:false, notes:"Active recovery, low intensity", mi:2}
+                            ]
+                        },
+                        {
+                            name: "Friday - Mobility & Light Plyos",
+                            day: "Friday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Ankle Bounces", s:2, r:"20", w:"", pct:"", done:false, notes:"Re-introduce elastic qualities", mi:0},
+                                {n:"Leg Swings", s:2, r:"15/leg", w:"", pct:"", done:false, notes:"Hip mobility", mi:0},
+                                {n:"Light Step-ups", s:2, r:"12/leg", w:"BW", pct:"", done:false, notes:"Single-leg movement", mi:0},
+                                {n:"Foam Rolling", s:1, r:"15min", w:"", pct:"", done:false, notes:"Tissue quality", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Weekend - Complete Rest or Light Activity",
+                            day: "Saturday/Sunday",
+                            totalMiles: 0,
+                            ex: [
+                                {n:"Optional: Easy 15min walk", s:1, r:"", w:"", pct:"", done:false, notes:"Only if feeling great, otherwise full rest", mi:0}
+                            ]
+                        }
+                    ];
+                }
+
+                // GENERAL PREP WEEKS 3-4
+                if(isGeneralPrep) {
+                    const sqW = Math.round(365 * 0.50 / 5) * 5;
+                    const benW = Math.round(255 * 0.50 / 5) * 5;
+                    const trapW = Math.round(405 * 0.50 / 5) * 5;
+                    
+                    return [
+                        {
+                            name: "Monday - Movement Foundation",
+                            day: "Monday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Dynamic Warm-up", s:1, r:"10min", w:"", pct:"", done:false, notes:"A-skips, leg swings, mobility", mi:0},
+                                {n:"Goblet Squat", s:3, r:"12-15", w:"35", pct:"", done:false, notes:"Focus on depth and control", mi:0},
+                                {n:"Trap Bar Deadlift", s:3, r:"12-15", w:trapW, pct:"50", done:false, notes:"Light load, perfect form", mi:0},
+                                {n:"Lunges", s:3, r:"10/leg", w:"BW", pct:"", done:false, notes:"Body control", mi:0},
+                                {n:"Planks", s:3, r:"45s", w:"", pct:"", done:false, notes:"Core stability", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Tuesday - Easy Run",
+                            day: "Tuesday",
+                            totalMiles: 3,
+                            ex: [
+                                {n:"Warm-up", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Very easy pace 8:30-9:00/mi", mi:1},
+                                {n:"Easy Run", s:1, r:"20-30min", w:"", pct:"", done:false, notes:"Conversational pace, 8:00-8:30/mi", mi:2}
+                            ]
+                        },
+                        {
+                            name: "Wednesday - Upper Body Foundation",
+                            day: "Wednesday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"DB Bench Press", s:3, r:"12-15", w:"40", pct:"", done:false, notes:"Light resistance, form focus", mi:0},
+                                {n:"DB Rows", s:3, r:"12/arm", w:"40", pct:"", done:false, notes:"Controlled movement", mi:0},
+                                {n:"Push-ups", s:3, r:"12-15", w:"BW", pct:"", done:false, notes:"Quality reps", mi:0},
+                                {n:"Face Pulls", s:3, r:"15", w:"30", pct:"", done:false, notes:"Shoulder health", mi:0},
+                                {n:"Dead Bugs", s:3, r:"10/side", w:"", pct:"", done:false, notes:"Core control", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Thursday - Easy Run + Strides",
+                            day: "Thursday",
+                            totalMiles: 3,
+                            ex: [
+                                {n:"Easy Run", s:1, r:"25min", w:"", pct:"", done:false, notes:"Comfortable pace 8:00-8:30/mi", mi:2.5},
+                                {n:"Strides", s:4, r:"50m", w:"", pct:"", done:false, notes:"Build to 70%, focus on form", mi:0.5}
+                            ]
+                        },
+                        {
+                            name: "Friday - Low Intensity Plyos",
+                            day: "Friday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Dynamic Warm-up", s:1, r:"10min", w:"", pct:"", done:false, notes:"Movement prep", mi:0},
+                                {n:"DL Pogos", s:3, r:"8-10", w:"", pct:"", done:false, notes:"Elastic ankle stiffness", mi:0},
+                                {n:"Skip Variations", s:3, r:"20yd", w:"", pct:"", done:false, notes:"A-skips, B-skips", mi:0},
+                                {n:"Low Box Jumps", s:3, r:"6", w:"12in", pct:"", done:false, notes:"Soft landings", mi:0},
+                                {n:"Core Circuit", s:2, r:"30s each", w:"", pct:"", done:false, notes:"Planks, side planks, bird dogs", mi:0}
+                            ]
+                        },
+                        {
+                            name: "Saturday - Full Body Light",
+                            day: "Saturday",
+                            totalMiles: 1,
+                            ex: [
+                                {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                                {n:"Back Squat", s:3, r:"12", w:sqW, pct:"50", done:false, notes:"Bar path and technique", mi:0},
+                                {n:"Bench Press", s:3, r:"12", w:benW, pct:"50", done:false, notes:"Controlled tempo", mi:0},
+                                {n:"Romanian Deadlift", s:3, r:"12", w:"135", pct:"", done:false, notes:"Hip hinge pattern", mi:0},
+                                {n:"Pull-ups or Lat Pulldowns", s:3, r:"8-10", w:"BW", pct:"", done:false, notes:"Vertical pull", mi:0}
+                            ]
+                        }
+                    ];
+                }
+
+                // MAIN 52-WEEK BLOCK
+                const mainPhaseIndex = pi - 4;
+                const m = isDeload ? 0.85 : 1.0;
+                let sq=0.7, ben=0.7, trap=0.7, cln=0.7, reps="8", sets=4;
+                
+                if(mainPhaseIndex === 0) { sq=0.55; ben=0.55; trap=0.55; cln=0.55; reps="12"; }
+                else if(mainPhaseIndex === 1 || mainPhaseIndex === 4) { sq=0.70; ben=0.70; trap=0.70; cln=0.65; reps="8-10"; }
+                else if(mainPhaseIndex === 2 || mainPhaseIndex === 5) { sq=0.82; ben=0.82; trap=0.82; cln=0.75; reps="5"; sets=5; }
+                else if(mainPhaseIndex === 3 || mainPhaseIndex === 6) { sq=0.87; ben=0.87; trap=0.87; cln=0.85; reps="3"; sets=5; }
+                else if(mainPhaseIndex === 7 || mainPhaseIndex === 11) { sq=0.80; ben=0.80; trap=0.80; cln=0.75; reps="5"; sets=3; }
+                else if(mainPhaseIndex === 8) { sq=0.88; ben=0.88; trap=0.88; cln=0.82; reps="3"; sets=5; }
+                else if(mainPhaseIndex === 9) { sq=0.92; ben=0.92; trap=0.92; cln=0.85; reps="2-3"; sets=4; }
+                else if(mainPhaseIndex === 10) { sq=0.85; ben=0.85; trap=0.85; cln=0.90; reps="2-3"; sets=3; }
+                else { sq=0.95; ben=0.95; trap=0.95; cln=0.90; reps="1-3"; sets=3; }
+
+                const sqW = Math.round(365 * sq * m / 5) * 5;
+                const benW = Math.round(255 * ben * m / 5) * 5;
+                const trapW = Math.round(405 * trap * m / 5) * 5;
+                const clnW = Math.round(225 * cln * m / 5) * 5;
+
+                let tueRun="", thuRun="", tueMi=0, thuMi=0;
+                if(mainPhaseIndex <= 1) {
+                    tueRun="Tempo 4mi @ 6:30 pace"; tueMi=7;
+                    thuRun="Fartlek 5mi (2min hard/easy)"; thuMi=7;
+                } else if(mainPhaseIndex <= 4) {
+                    tueRun="6x800m @ 5:35 pace"; tueMi=6;
+                    thuRun="Tempo 5mi @ 6:20 pace"; thuMi=8;
+                } else if(mainPhaseIndex <= 6) {
+                    tueRun="8x600m speed endurance"; tueMi=6;
+                    thuRun="3x1mi @ 5:40 pace"; thuMi=7;
+                } else if(mainPhaseIndex === 7 || mainPhaseIndex === 11) {
+                    tueRun="10x400m @ 5:15 GOAL PACE"; tueMi=6;
+                    thuRun="2x800m + 4x200m mixed speed"; thuMi=5;
+                } else {
+                    tueRun="Easy 4mi maintenance"; tueMi=4;
+                    thuRun="Easy 4mi aerobic"; thuMi=4;
+                }
+
+                return [
+                    {
+                        name: "Monday - Lower Body",
+                        day: "Monday",
+                        totalMiles: 1,
+                        ex: [
+                            {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                            {n:"Plyometrics", s:3, r:"6", w:"", pct:"", done:false, notes:"Box jumps/pogos/bounds", mi:0},
+                            {n:"Back Squat", s:sets, r:reps, w:sqW, pct:Math.round(sq*100), done:false, notes:"Main strength lift", mi:0},
+                            {n:"Trap Bar Deadlift", s:sets, r:reps, w:trapW, pct:Math.round(trap*100), done:false, notes:"Hip dominant", mi:0},
+                            {n:"Bulgarian Split Squat", s:3, r:"8/leg", w:65, pct:"", done:false, notes:"Single-leg strength", mi:0},
+                            {n:"Nordic Curls", s:3, r:"6-8", w:"BW", pct:"", done:false, notes:"Hamstring eccentric", mi:0},
+                            {n:"Pallof Press", s:3, r:"10/side", w:40, pct:"", done:false, notes:"Anti-rotation core", mi:0}
+                        ]
+                    },
+                    {
+                        name: "Tuesday - Run: " + tueRun,
+                        day: "Tuesday",
+                        totalMiles: tueMi,
+                        ex: [
+                            {n:"Warm-up", s:1, r:"2mi", w:"", pct:"", done:false, notes:"Easy pace 7:30-8:00", mi:2},
+                            {n:"Main Work: " + tueRun, s:1, r:"", w:"", pct:"", done:false, notes:"Quality session #1", mi:tueMi-3},
+                            {n:"Cool-down", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy pace", mi:1}
+                        ]
+                    },
+                    {
+                        name: "Wednesday - Upper Body",
+                        day: "Wednesday",
+                        totalMiles: 1,
+                        ex: [
+                            {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                            {n:"Med Ball Chest Throws", s:3, r:"8", w:"", pct:"", done:false, notes:"Explosive prep", mi:0},
+                            {n:"Bench Press", s:sets, r:reps, w:benW, pct:Math.round(ben*100), done:false, notes:"Main pressing", mi:0},
+                            {n:"Power Clean", s:4, r:"3", w:clnW, pct:Math.round(cln*100), done:false, notes:"Explosive power", mi:0},
+                            {n:"Weighted Pull-ups", s:4, r:"6-8", w:"+25", pct:"", done:false, notes:"Vertical pull", mi:0},
+                            {n:"DB Rows", s:3, r:"10/arm", w:80, pct:"", done:false, notes:"Horizontal pull", mi:0},
+                            {n:"Face Pulls", s:3, r:"15-20", w:50, pct:"", done:false, notes:"Shoulder health", mi:0}
+                        ]
+                    },
+                    {
+                        name: "Thursday - Run: " + thuRun,
+                        day: "Thursday",
+                        totalMiles: thuMi,
+                        ex: [
+                            {n:"Warm-up", s:1, r:"2mi", w:"", pct:"", done:false, notes:"Easy pace", mi:2},
+                            {n:"Main Work: " + thuRun, s:1, r:"", w:"", pct:"", done:false, notes:"Quality session #2", mi:thuMi-3},
+                            {n:"Cool-down", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy pace", mi:1}
+                        ]
+                    },
+                    {
+                        name: "Friday - Speed/Power Work",
+                        day: "Friday",
+                        totalMiles: 1,
+                        ex: [
+                            {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                            {n:"Sprint Drills", s:1, r:"15min", w:"", pct:"", done:false, notes:"A-skips, B-skips, build-ups", mi:0},
+                            {n:"30-Yard Dashes", s:6, r:"30yd", w:"", pct:"", done:false, notes:"Max effort, full recovery", mi:0},
+                            {n:"Vertical Jump Training", s:4, r:"5", w:"", pct:"", done:false, notes:"Max height attempts", mi:0},
+                            {n:"Bounds/Hops", s:3, r:"20yd", w:"", pct:"", done:false, notes:"Horizontal power", mi:0},
+                            {n:"Core Circuit", s:3, r:"30s each", w:"", pct:"", done:false, notes:"Planks/dead bugs/side planks", mi:0}
+                        ]
+                    },
+                    {
+                        name: "Saturday - Full Body Integration",
+                        day: "Saturday",
+                        totalMiles: 1,
+                        ex: [
+                            {n:"Daily Mile", s:1, r:"1mi", w:"", pct:"", done:false, notes:"Easy conversational pace", mi:1},
+                            {n:"Front Squat", s:3, r:"8", w:Math.round(sqW*0.75), pct:Math.round(sq*75), done:false, notes:"Quad emphasis", mi:0},
+                            {n:"Incline Bench Press", s:3, r:"8", w:Math.round(benW*0.80), pct:Math.round(ben*80), done:false, notes:"Upper chest", mi:0},
+                            {n:"Romanian Deadlift", s:3, r:"8", w:225, pct:"", done:false, notes:"Posterior chain", mi:0},
+                            {n:"DB Shoulder Press", s:3, r:"10", w:60, pct:"", done:false, notes:"Overhead strength", mi:0},
+                            {n:"Cable Rows", s:3, r:"12", w:120, pct:"", done:false, notes:"Back volume", mi:0}
+                        ]
+                    }
+                ];
+            }
+
+            const week = data.weeks[currentWeek];
+            const session = week.sessions[currentSession];
+
+            const calculateSessionVolume = (sessionData) => {
+                let volume = 0;
+                sessionData.ex.forEach(ex => {
+                    if(ex.w && ex.w !== 'BW' && ex.w !== '') {
+                        // Handle both string and numeric weights
+                        const weightStr = typeof ex.w === 'string' ? ex.w : String(ex.w);
+                        const weight = parseFloat(weightStr.replace(/[^0-9.]/g, ''));
+                        if(!isNaN(weight) && weight > 0) {
+                            const sets = parseInt(ex.s) || 0;
+                            const reps = parseInt(ex.r) || 0;
+                            if(reps > 0) {
+                                volume += weight * sets * reps;
+                            }
+                        }
+                    }
+                });
+                return volume;
+            };
+
+            const calculateWeekVolume = (weekData) => {
+                let total = 0;
+                weekData.sessions.forEach(sess => {
+                    total += calculateSessionVolume(sess);
+                });
+                return total;
+            };
+
+            const calculateTotalVolume = () => {
+                let total = 0;
+                data.weeks.forEach(wk => {
+                    total += calculateWeekVolume(wk);
+                });
+                return total;
+            };
+
+            const toggleDone = (exIdx) => {
+                const newData = {...data};
+                const ex = newData.weeks[currentWeek].sessions[currentSession].ex[exIdx];
+                ex.done = !ex.done;
+                
+                if(ex.mi > 0) {
+                    const key = `w${currentWeek}`;
+                    if(!newData.weekMiles[key]) newData.weekMiles[key] = 0;
+                    if(ex.done) {
+                        newData.totalMiles += ex.mi;
+                        newData.weekMiles[key] += ex.mi;
+                    } else {
+                        newData.totalMiles -= ex.mi;
+                        newData.weekMiles[key] -= ex.mi;
+                    }
+                }
+                
+                setData(newData);
+                if(ex.done) createConfetti();
+            };
+
+            const createConfetti = () => {
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+                for(let i = 0; i < 20; i++) {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = Math.random() * 100 + '%';
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.animationDelay = Math.random() * 0.3 + 's';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 3000);
+                }
+            };
+
+            const updateGoal = (idx, field, val) => {
+                const newData = {...data};
+                newData.goals[idx][field] = parseFloat(val) || 0;
+                setData(newData);
+            };
+
+            const addExercise = () => {
+                const newData = {...data};
+                newData.weeks[currentWeek].sessions[currentSession].ex.push({
+                    n:"New Exercise", s:3, r:"10", w:"100", pct:"", done:false, notes:"", mi:0
+                });
+                setData(newData);
+            };
+
+            const deleteExercise = (idx) => {
+                const newData = {...data};
+                newData.weeks[currentWeek].sessions[currentSession].ex.splice(idx, 1);
+                setData(newData);
+            };
+
+            const updateExercise = (idx, field, val) => {
+                const newData = {...data};
+                newData.weeks[currentWeek].sessions[currentSession].ex[idx][field] = val;
+                setData(newData);
+            };
+
+            const getProgress = (g) => {
+                if(g.lower) return Math.min(g.target / g.curr * 100, 100);
+                return Math.min(g.curr / g.target * 100, 100);
+            };
+
+            const getCompletion = () => {
+                const done = session.ex.filter(e => e.done).length;
+                return Math.round(done / session.ex.length * 100);
+            };
+
+            const weekMiles = data.weekMiles[`w${currentWeek}`] || 0;
+            const completion = getCompletion();
+            const sessionVolume = calculateSessionVolume(session);
+            const weekVolume = calculateWeekVolume(week);
+            const totalVolume = calculateTotalVolume();
+
+            return (
+                <div className="container">
+                    <div className="glass animate-in">
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'start', flexWrap:'wrap', gap:'16px'}}>
+                            <div>
+                                <h1 style={{margin:0, fontSize:'44px', fontWeight:'800', background:'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent'}}>
+                                    💪 Chase's 56-Week Training
+                                </h1>
+                                <p style={{margin:'10px 0 0 0', color:'#6b7280', fontSize:'18px', fontWeight:'500'}}>
+                                    Week {week.num} of 56 • {week.phase}
+                                </p>
+                                <p style={{margin:'6px 0 0 0', fontSize:'15px', color:'#7c3aed', fontWeight:'600'}}>
+                                    🎯 {week.focus}
+                                </p>
+                                {week.num <= 4 && (
+                                    <p style={{margin:'6px 0 0 0', fontSize:'14px', color:'#10b981', fontWeight:'700', background:'rgba(16, 185, 129, 0.1)', padding:'8px 12px', borderRadius:'8px', display:'inline-block'}}>
+                                        {week.num <= 2 ? '💚 RECOVERY PHASE - Deep recovery from half marathon' : '🟢 GENERAL PREP - Building foundation for main block'}
+                                    </p>
+                                )}
+                            </div>
+                            <div style={{display:'flex', gap:'8px', flexWrap:'wrap'}}>
+                                <span className="badge badge-green">🏃 {data.totalMiles.toFixed(1)} mi total</span>
+                                <span className="badge badge-blue">Week: {weekMiles.toFixed(1)} mi</span>
+                                <span className="badge badge-purple">V:{week.vol} I:{week.int}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="glass">
+                        <button onClick={() => setView('overview')} className={view==='overview' ? 'btn btn-active' : 'btn btn-secondary'}>
+                            📈 Overview
+                        </button>
+                        <button onClick={() => setView('goals')} className={view==='goals' ? 'btn btn-active' : 'btn btn-secondary'}>
+                            🎯 Goals
+                        </button>
+                        <button onClick={() => setView('workout')} className={view==='workout' ? 'btn btn-active' : 'btn btn-secondary'}>
+                            🏋️ Workout
+                        </button>
+                        <button onClick={() => setView('mileage')} className={view==='mileage' ? 'btn btn-active' : 'btn btn-secondary'}>
+                            🏃 Mileage
+                        </button>
+                        <button onClick={() => setView('volume')} className={view==='volume' ? 'btn btn-active' : 'btn btn-secondary'}>
+                            📊 Volume
+                        </button>
+                        <button onClick={() => setEditMode(!editMode)} className={editMode ? 'btn btn-active' : 'btn btn-secondary'} style={{marginLeft:'auto'}}>
+                            {editMode ? '✏️ Editing' : '✏️ Edit'}
+                        </button>
+                    </div>
+
+                    {view === 'overview' && (
+                        <>
+                            <div className="glass">
+                                <h2 style={{marginTop:0}}>📊 56-Week Periodization Chart</h2>
+                                <canvas ref={macroChartRef}></canvas>
+                            </div>
+
+                            <div className="glass">
+                                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'16px', marginBottom:'24px'}}>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Current Week</div>
+                                        <div className="stat-number" style={{color:'#10b981'}}>{week.num}</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Remaining</div>
+                                        <div className="stat-number" style={{color:'#7c3aed'}}>{56 - week.num}</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Progress</div>
+                                        <div className="stat-number" style={{color:'#3b82f6'}}>{Math.round(week.num/56*100)}%</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Main Block Starts</div>
+                                        <div className="stat-number" style={{color:'#f59e0b', fontSize:'24px'}}>Jan 1</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="glass">
+                                <h2>Week Navigator</h2>
+                                <div className="week-grid">
+                                    {data.weeks.map((w, i) => (
+                                        <div key={i} onClick={() => {setCurrentWeek(i); setView('workout');}}
+                                            className={`week-box ${i===currentWeek?'active':''} ${w.recovery?'recovery':''} ${w.generalprep?'generalprep':''} ${w.deload?'deload':''} ${w.test?'test':''}`}>
+                                            <div style={{fontWeight:'800', fontSize:'18px'}}>{w.num}</div>
+                                            <div style={{fontSize:'11px', marginTop:'4px'}}>V:{w.vol}</div>
+                                            {w.recovery && <div style={{fontSize:'14px', marginTop:'2px'}}>💚</div>}
+                                            {w.generalprep && <div style={{fontSize:'14px', marginTop:'2px'}}>🟢</div>}
+                                            {w.deload && !w.recovery && !w.generalprep && <div style={{fontSize:'14px', marginTop:'2px'}}>🔄</div>}
+                                            {w.test && <div style={{fontSize:'14px', marginTop:'2px'}}>🏆</div>}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{marginTop:'16px', display:'flex', gap:'16px', flexWrap:'wrap', fontSize:'13px'}}>
+                                    <div style={{display:'flex', alignItems:'center', gap:'6px'}}>
+                                        <div style={{width:'20px', height:'20px', background:'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', border:'2px solid #10b981', borderRadius:'4px'}}></div>
+                                        <span>Recovery</span>
+                                    </div>
+                                    <div style={{display:'flex', alignItems:'center', gap:'6px'}}>
+                                        <div style={{width:'20px', height:'20px', background:'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)', border:'2px solid #22c55e', borderRadius:'4px'}}></div>
+                                        <span>General Prep</span>
+                                    </div>
+                                    <div style={{display:'flex', alignItems:'center', gap:'6px'}}>
+                                        <div style={{width:'20px', height:'20px', background:'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', border:'2px solid #f59e0b', borderRadius:'4px'}}></div>
+                                        <span>Deload</span>
+                                    </div>
+                                    <div style={{display:'flex', alignItems:'center', gap:'6px'}}>
+                                        <div style={{width:'20px', height:'20px', background:'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)', border:'2px solid #ef4444', borderRadius:'4px'}}></div>
+                                        <span>Testing</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="glass">
+                                <h2>Current Training Block</h2>
+                                <div style={{padding:'24px', background:`linear-gradient(135deg, ${week.color}15 0%, ${week.color}25 100%)`, borderRadius:'14px', border:`3px solid ${week.color}`}}>
+                                    <h3 style={{margin:'0 0 12px 0', color:week.color, fontSize:'28px'}}>{week.phase}</h3>
+                                    <p style={{margin:'0 0 20px 0', fontSize:'16px', lineHeight:'1.6'}}>{week.focus}</p>
+                                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px'}}>
+                                        <div style={{background:'white', padding:'16px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                                            <div style={{fontSize:'12px', color:'#6b7280', fontWeight:'600', marginBottom:'6px'}}>VOLUME LOAD</div>
+                                            <div style={{fontSize:'32px', fontWeight:'800', color:'#3b82f6'}}>{week.vol}<span style={{fontSize:'18px', color:'#9ca3af'}}>/10</span></div>
+                                        </div>
+                                        <div style={{background:'white', padding:'16px', borderRadius:'10px', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                                            <div style={{fontSize:'12px', color:'#6b7280', fontWeight:'600', marginBottom:'6px'}}>INTENSITY</div>
+                                            <div style={{fontSize:'32px', fontWeight:'800', color:'#ef4444'}}>{week.int}<span style={{fontSize:'18px', color:'#9ca3af'}}>/10</span></div>
+                                        </div>
+                                    </div>
+                                    {week.recovery && (
+                                        <div style={{marginTop:'16px', background:'#10b981', color:'white', padding:'12px', borderRadius:'10px', textAlign:'center', fontWeight:'700', fontSize:'15px'}}>
+                                            💚 RECOVERY WEEK - Active rest and tissue healing
+                                        </div>
+                                    )}
+                                    {week.generalprep && (
+                                        <div style={{marginTop:'16px', background:'#22c55e', color:'white', padding:'12px', borderRadius:'10px', textAlign:'center', fontWeight:'700', fontSize:'15px'}}>
+                                            🟢 GENERAL PREP - Foundation building for main block
+                                        </div>
+                                    )}
+                                    {week.deload && !week.recovery && !week.generalprep && (
+                                        <div style={{marginTop:'16px', background:'#fbbf24', padding:'12px', borderRadius:'10px', textAlign:'center', fontWeight:'700', fontSize:'15px'}}>
+                                            🔄 DELOAD WEEK - Recovery & Adaptation
+                                        </div>
+                                    )}
+                                    {week.test && (
+                                        <div style={{marginTop:'16px', background:'#10b981', color:'white', padding:'12px', borderRadius:'10px', textAlign:'center', fontWeight:'700', fontSize:'15px'}}>
+                                            🏆 TESTING WEEK - Max Out All Goals!
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="glass">
+                                <h2>17 Training Phases (4 Prep + 13 Main)</h2>
+                                {PHASES.map((p, i) => (
+                                    <div key={i} style={{background:`linear-gradient(135deg, ${p.color}10 0%, ${p.color}20 100%)`, padding:'16px', marginBottom:'12px', borderRadius:'10px', border:`2px solid ${p.color}40`}}>
+                                        <div style={{fontWeight:'700', fontSize:'16px', color:p.color}}>
+                                            {p.name} <span style={{fontSize:'13px', color:'#6b7280'}}>({p.weeks} week{p.weeks > 1 ? 's' : ''})</span>
+                                        </div>
+                                        <div style={{fontSize:'14px', color:'#374151', marginTop:'4px'}}>{p.focus}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {view === 'goals' && (
+                        <>
+                            <div className="glass">
+                                <h2>Performance Goals Chart</h2>
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                            
+                            {data.goals.map((g, i) => {
+                                const prog = getProgress(g);
+                                return (
+                                    <div key={i} className="goal-card">
+                                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px'}}>
+                                            <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
+                                                <span style={{fontSize:'40px'}}>{g.icon}</span>
+                                                <div>
+                                                    <h3 style={{margin:0, fontSize:'22px', fontWeight:'700'}}>{g.name}</h3>
+                                                    <p style={{margin:'6px 0 0 0', fontSize:'14px', color:'#6b7280'}}>
+                                                        Target: {g.display || `${g.target} ${g.unit}`}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{textAlign:'right'}}>
+                                                {editMode ? (
+                                                    <input type="number" step="0.1" value={g.curr}
+                                                        onChange={(e) => updateGoal(i, 'curr', e.target.value)}
+                                                        className="edit-input" style={{width:'100px', textAlign:'right', fontSize:'20px', fontWeight:'700'}} />
+                                                ) : (
+                                                    <span style={{fontSize:'32px', fontWeight:'800', color:'#7c3aed'}}>{g.curr}</span>
+                                                )}
+                                                <span style={{fontSize:'16px', color:'#6b7280', marginLeft:'6px'}}>{g.unit}</span>
+                                            </div>
+                                        </div>
+                                        <div className="goal-progress">
+                                            <div className={`goal-progress-bar ${prog>=90?'green':prog>=70?'yellow':'red'}`} style={{width: prog + '%'}}>
+                                            </div>
+                                        </div>
+                                        <div style={{marginTop:'8px', fontSize:'14px', color:'#6b7280', textAlign:'center', fontWeight:'600'}}>
+                                            {Math.round(prog)}% Complete
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </>
+                    )}
+
+                    {view === 'mileage' && (
+                        <div className="glass">
+                            <h2>🏃 Running Mileage Tracker</h2>
+                            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))', gap:'20px', marginBottom:'32px'}}>
+                                <div style={{background:'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #10b981'}}>
+                                    <div style={{fontSize:'14px', color:'#065f46', fontWeight:'700', marginBottom:'8px'}}>TOTAL MILEAGE</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#047857'}}>{data.totalMiles.toFixed(1)}</div>
+                                    <div style={{fontSize:'14px', color:'#065f46', fontWeight:'600'}}>miles</div>
+                                </div>
+                                <div style={{background:'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #3b82f6'}}>
+                                    <div style={{fontSize:'14px', color:'#1e40af', fontWeight:'700', marginBottom:'8px'}}>THIS WEEK</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#2563eb'}}>{weekMiles.toFixed(1)}</div>
+                                    <div style={{fontSize:'14px', color:'#1e40af', fontWeight:'600'}}>miles</div>
+                                </div>
+                                <div style={{background:'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #7c3aed'}}>
+                                    <div style={{fontSize:'14px', color:'#5b21b6', fontWeight:'700', marginBottom:'8px'}}>WEEKLY AVG</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#6d28d9'}}>{(data.totalMiles / Math.max(1, currentWeek+1)).toFixed(1)}</div>
+                                    <div style={{fontSize:'14px', color:'#5b21b6', fontWeight:'600'}}>miles/week</div>
+                                </div>
+                            </div>
+
+                            <h3>Weekly Mileage Breakdown</h3>
+                            <div className="mileage-breakdown">
+                                {data.weeks.map((w, i) => {
+                                    const mi = data.weekMiles[`w${i}`] || 0;
+                                    return (
+                                        <div key={i} className={`mileage-row ${i===currentWeek?'current':''}`}>
+                                            <div>
+                                                <span style={{fontWeight:'700', fontSize:'15px'}}>Week {w.num}</span>
+                                                <span style={{fontSize:'13px', color:'#6b7280', marginLeft:'8px'}}>({w.phase})</span>
+                                            </div>
+                                            <div style={{textAlign:'right'}}>
+                                                <div style={{fontWeight:'700', color:'#3b82f6', fontSize:'16px'}}>{mi.toFixed(1)} mi</div>
+                                                {mi > 0 && <div className="mileage-bar" style={{width: Math.min(mi * 15, 150) + 'px'}}></div>}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {view === 'volume' && (
+                        <div className="glass">
+                            <h2>📊 Training Volume Calculator</h2>
+                            <p style={{color:'#6b7280', marginBottom:'24px'}}>Total volume calculated as Sets × Reps × Weight for all resistance exercises</p>
+                            
+                            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', gap:'20px', marginBottom:'32px'}}>
+                                <div style={{background:'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #f59e0b'}}>
+                                    <div style={{fontSize:'14px', color:'#92400e', fontWeight:'700', marginBottom:'8px'}}>TOTAL VOLUME (56 WEEKS)</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#d97706'}}>{(totalVolume / 1000).toFixed(1)}k</div>
+                                    <div style={{fontSize:'14px', color:'#92400e', fontWeight:'600'}}>lbs lifted</div>
+                                </div>
+                                <div style={{background:'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #3b82f6'}}>
+                                    <div style={{fontSize:'14px', color:'#1e40af', fontWeight:'700', marginBottom:'8px'}}>THIS WEEK VOLUME</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#2563eb'}}>{(weekVolume / 1000).toFixed(1)}k</div>
+                                    <div style={{fontSize:'14px', color:'#1e40af', fontWeight:'600'}}>lbs lifted</div>
+                                </div>
+                                <div style={{background:'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', borderRadius:'14px', padding:'24px', textAlign:'center', border:'3px solid #10b981'}}>
+                                    <div style={{fontSize:'14px', color:'#065f46', fontWeight:'700', marginBottom:'8px'}}>TODAY'S SESSION</div>
+                                    <div style={{fontSize:'48px', fontWeight:'800', color:'#047857'}}>{(sessionVolume / 1000).toFixed(1)}k</div>
+                                    <div style={{fontSize:'14px', color:'#065f46', fontWeight:'600'}}>lbs lifted</div>
+                                </div>
+                            </div>
+
+                            <div className="volume-card">
+                                <h3 style={{marginTop:0, color:'#92400e'}}>Current Week Breakdown (Week {week.num})</h3>
+                                {week.sessions.map((s, i) => {
+                                    const sVol = calculateSessionVolume(s);
+                                    return (
+                                        <div key={i} className="volume-stat">
+                                            <span className="volume-label">{s.name}</span>
+                                            <span className="volume-value">{(sVol / 1000).toFixed(1)}k lbs</span>
+                                        </div>
+                                    );
+                                })}
+                                <div style={{marginTop:'16px', padding:'16px', background:'white', borderRadius:'10px', border:'2px solid #f59e0b'}}>
+                                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                        <span style={{fontWeight:'800', color:'#92400e', fontSize:'18px'}}>WEEK TOTAL</span>
+                                        <span style={{fontWeight:'800', color:'#d97706', fontSize:'24px'}}>{(weekVolume / 1000).toFixed(1)}k lbs</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{marginTop:'32px'}}>
+                                <h3>Volume by Week</h3>
+                                <div className="mileage-breakdown">
+                                    {data.weeks.map((w, i) => {
+                                        const wVol = calculateWeekVolume(w);
+                                        return (
+                                            <div key={i} className={`mileage-row ${i===currentWeek?'current':''}`}>
+                                                <div>
+                                                    <span style={{fontWeight:'700', fontSize:'15px'}}>Week {w.num}</span>
+                                                    <span style={{fontSize:'13px', color:'#6b7280', marginLeft:'8px'}}>({w.phase})</span>
+                                                </div>
+                                                <div style={{textAlign:'right'}}>
+                                                    <div style={{fontWeight:'700', color:'#f59e0b', fontSize:'16px'}}>{(wVol / 1000).toFixed(1)}k lbs</div>
+                                                    <div className="mileage-bar" style={{width: Math.min(wVol / 200, 150) + 'px', background:'#f59e0b'}}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {view === 'workout' && (
+                        <>
+                            <div className="glass">
+                                <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px'}}>
+                                    <div>
+                                        <label style={{display:'block', fontWeight:'700', marginBottom:'8px', fontSize:'14px', color:'#374151'}}>Select Week</label>
+                                        <select value={currentWeek} onChange={(e) => {setCurrentWeek(parseInt(e.target.value)); setCurrentSession(0);}}>
+                                            {data.weeks.map((w, i) => (
+                                                <option key={i} value={i}>
+                                                    W{w.num} - {w.phase} {w.recovery?'(RECOVERY)':''} {w.generalprep?'(PREP)':''} {w.deload && !w.recovery && !w.generalprep?'(DELOAD)':''} {w.test?'(TEST)':''} - V:{w.vol} I:{w.int}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style={{display:'block', fontWeight:'700', marginBottom:'8px', fontSize:'14px', color:'#374151'}}>Select Session</label>
+                                        <select value={currentSession} onChange={(e) => setCurrentSession(parseInt(e.target.value))}>
+                                            {week.sessions.map((s, i) => (
+                                                <option key={i} value={i}>{s.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="glass" style={{background:'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', border:'3px solid #10b981'}}>
+                                <div style={{display:'flex', alignItems:'center', gap:'16px', padding:'8px'}}>
+                                    <input 
+                                        type="checkbox" 
+                                        className="checkbox" 
+                                        checked={data.weeks[currentWeek].sessions[currentSession].dailyMileDone || false}
+                                        onChange={() => {
+                                            const newData = {...data};
+                                            const currentDone = newData.weeks[currentWeek].sessions[currentSession].dailyMileDone || false;
+                                            newData.weeks[currentWeek].sessions[currentSession].dailyMileDone = !currentDone;
+                                            
+                                            const key = `w${currentWeek}`;
+                                            if(!newData.weekMiles[key]) newData.weekMiles[key] = 0;
+                                            
+                                            if(!currentDone) {
+                                                newData.totalMiles += 1;
+                                                newData.weekMiles[key] += 1;
+                                                createConfetti();
+                                            } else {
+                                                newData.totalMiles -= 1;
+                                                newData.weekMiles[key] -= 1;
+                                            }
+                                            setData(newData);
+                                        }}
+                                    />
+                                    <div style={{flex:1}}>
+                                        <h3 style={{margin:0, fontSize:'20px', fontWeight:'700', color:'#047857'}}>
+                                            🏃 Daily Mile
+                                        </h3>
+                                        <p style={{margin:'4px 0 0 0', fontSize:'14px', color:'#065f46'}}>
+                                            Check off your 1 mile easy run for today
+                                        </p>
+                                    </div>
+                                    <div style={{textAlign:'center', padding:'12px 20px', background:'white', borderRadius:'10px', border:'2px solid #10b981'}}>
+                                        <div style={{fontSize:'12px', color:'#6b7280', fontWeight:'600'}}>ADDS</div>
+                                        <div style={{fontSize:'24px', fontWeight:'800', color:'#10b981'}}>+1.0</div>
+                                        <div style={{fontSize:'11px', color:'#6b7280'}}>mile</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="glass">
+                                <div className="session-header">
+                                    <h3 style={{margin:'0 0 8px 0', fontSize:'20px', fontWeight:'700', color:'#5b21b6'}}>{session.name}</h3>
+                                    <p style={{margin:0, fontSize:'14px', color:'#6b7280'}}>
+                                        {session.day} • {week.phase} - Week {week.num}
+                                    </p>
+                                    <div style={{marginTop:'8px', display:'flex', gap:'8px', flexWrap:'wrap'}}>
+                                        {session.totalMiles > 0 && (
+                                            <span className="badge badge-green">{session.totalMiles.toFixed(1)} miles</span>
+                                        )}
+                                        <span className="badge badge-orange">{(sessionVolume / 1000).toFixed(1)}k lbs volume</span>
+                                    </div>
+                                </div>
+
+                                <div className="progress-ring">
+                                    <div className="progress-fill" style={{width: completion + '%'}}></div>
+                                </div>
+                                <div style={{textAlign:'center', marginTop:'8px', fontSize:'14px', fontWeight:'700', color:'#7c3aed'}}>
+                                    {completion}% Complete
+                                </div>
+                            </div>
+
+                            <div className="glass">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>✓</th>
+                                            <th>Exercise</th>
+                                            <th>Sets</th>
+                                            <th>Reps</th>
+                                            <th>Weight</th>
+                                            <th>%1RM</th>
+                                            <th>Notes</th>
+                                            {editMode && <th>Actions</th>}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {session.ex.map((ex, i) => (
+                                            <tr key={i} className={ex.done ? 'completed' : ''}>
+                                                <td>
+                                                    <input type="checkbox" className="checkbox" checked={ex.done} onChange={() => toggleDone(i)} />
+                                                </td>
+                                                <td className="ex-name">
+                                                    {editMode ? (
+                                                        <input type="text" value={ex.n} onChange={(e) => updateExercise(i, 'n', e.target.value)}
+                                                            className="edit-input" style={{width:'100%'}} />
+                                                    ) : (
+                                                        <span style={{fontWeight:'700', fontSize:'15px'}}>{ex.n}</span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {editMode ? (
+                                                        <input type="number" value={ex.s} onChange={(e) => updateExercise(i, 's', e.target.value)}
+                                                            className="edit-input" style={{width:'60px'}} />
+                                                    ) : (
+                                                        <span style={{fontWeight:'600'}}>{ex.s}</span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {editMode ? (
+                                                        <input type="text" value={ex.r} onChange={(e) => updateExercise(i, 'r', e.target.value)}
+                                                            className="edit-input" style={{width:'80px'}} />
+                                                    ) : (
+                                                        ex.r
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {editMode ? (
+                                                        <input type="text" value={ex.w} onChange={(e) => updateExercise(i, 'w', e.target.value)}
+                                                            className="edit-input" style={{width:'80px'}} />
+                                                    ) : (
+                                                        <span style={{fontWeight:'600'}}>{ex.w || '-'}</span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {ex.pct ? <span className="pct-badge">{ex.pct}%</span> : '-'}
+                                                </td>
+                                                <td style={{fontSize:'13px', color:'#6b7280'}}>{ex.notes}</td>
+                                                {editMode && (
+                                                    <td>
+                                                        <button onClick={() => deleteExercise(i)} className="delete-btn">Delete</button>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {editMode && (
+                                    <button onClick={addExercise} className="add-btn">+ Add Exercise</button>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
